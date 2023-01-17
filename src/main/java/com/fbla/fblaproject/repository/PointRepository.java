@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PointRepository extends JpaRepository<Point, Integer> {
     
-    @Query(value = "SELECT * FROM AHS.POINT WHERE EVENTID = ?1 AND STUDENTGRADE = ?2 ORDER BY TIME DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM POINT WHERE EVENTID = ?1 AND STUDENTGRADE = ?2 ORDER BY TIME DESC", nativeQuery = true)
     List<Event> getEventPoints(int eventId, int studentGrade);
     
 }

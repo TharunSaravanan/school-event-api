@@ -18,10 +18,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends JpaRepository<Event,Integer> {
     
-    @Query(value = "SELECT * FROM AHS.EVENT WHERE TIME < CURDATE() ORDER BY TIME DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM EVENT WHERE TIME < CURDATE() ORDER BY TIME DESC", nativeQuery = true)
     List<Event> getCompletedEvents();
     
-    @Query(value = "SELECT * FROM AHS.EVENT WHERE TIME > CURDATE() ORDER BY TIME DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM EVENT WHERE TIME > CURDATE() ORDER BY TIME DESC", nativeQuery = true)
     List<Event> getUpcomingEvents();
     
 
