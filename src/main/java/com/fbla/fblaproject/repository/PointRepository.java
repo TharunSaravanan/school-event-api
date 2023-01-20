@@ -6,6 +6,7 @@
 package com.fbla.fblaproject.repository;
 
 import com.fbla.fblaproject.model.Event;
+import com.fbla.fblaproject.model.LeaderBoardPoint;
 import com.fbla.fblaproject.model.Point;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +20,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PointRepository extends JpaRepository<Point, Integer> {
     
-    @Query(value = "SELECT * FROM POINT WHERE EVENTID = ?1 AND STUDENTGRADE = ?2 ORDER BY TIME DESC", nativeQuery = true)
-    List<Event> getEventPoints(int eventId, int studentGrade);
+    @Query(value = "SELECT * FROM POINT WHERE event_id = ?1 and STUDENT_GRADE = ?2", nativeQuery = true)
+    List<Point> getEventPoints(int eventId, int grade);
     
+    @Query(value = "SELECT student_id as StudentId, s.name as StudentName, \n" +
+                    "student_grade as StudentGrade, sum(points) as TotalPoints\n" +
+                    "FROM point p, student s\n" +
+                    "WHERE p.student_id = s.id\n" +
+                    "group by student_id", nativeQuery = true)
+    List<LeaderBoardPoint> getLeaderBoard();
 }
