@@ -72,6 +72,11 @@ public class PointController {
         return pointRepository.getLeaderBoard();
     }
     
+    @GetMapping("/winner")
+    public List<Winner> getWinners(String quarterName) {
+        return winnerRepository.getWinners(quarterName);
+    }
+    
     @GetMapping("/draw")
     public List<Winner> draw(String quarterName) {
         
@@ -165,12 +170,8 @@ public class PointController {
                 winnerRepository.save(randomWinnerOne);
             
             }
-                    
-            
-
-        
         }
-        
+
         return winners;
     }
 }
