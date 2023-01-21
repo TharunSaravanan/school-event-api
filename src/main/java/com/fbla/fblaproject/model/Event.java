@@ -26,6 +26,15 @@ public class Event {
     private LocalDate time;
     private int attendancePoints;
     private int participationPoints;
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public int getAttendancePoints() {
         return attendancePoints;
