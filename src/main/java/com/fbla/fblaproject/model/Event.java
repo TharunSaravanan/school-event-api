@@ -5,6 +5,7 @@
  */
 package com.fbla.fblaproject.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +23,7 @@ public class Event {
     private int id;
     private String name;
     private String description;
-    private LocalDateTime time;
+    private LocalDate time;
     private int attendancePoints;
     private int participationPoints;
 
@@ -66,11 +67,11 @@ public class Event {
         this.description = description;
     }
 
-    public LocalDateTime getTime() {
+    public LocalDate getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
+    public void setTime(LocalDate time) {
         this.time = time;
     }
     
