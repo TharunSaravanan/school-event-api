@@ -68,8 +68,13 @@ public class PointController {
     }
     
     @GetMapping("/leaderBoard")
-    public List<LeaderBoardPoint> getLeaderBoard() {
-        return pointRepository.getLeaderBoard();
+    public List<LeaderBoardPoint> getLeaderBoard(String quarterName) {
+        return pointRepository.getLeaderBoardForQuarter(quarterName);
+    }
+    
+    @GetMapping("/quarters")
+    public List<Quarter> getQuarters() {
+        return quarterRepository.findAll();
     }
     
     @GetMapping("/winner")
@@ -85,6 +90,9 @@ public class PointController {
         
         Quarter quarter = quarterRepository.getQuarter(quarterName);
         
+        //delete prevoius draws if any
+        winnerRepository.deletePrevious(quarterName);
+        
         //selection
         for(int i = 9; i <=12; i++)
         {
@@ -93,7 +101,7 @@ public class PointController {
                                                             .filter(s -> s.getStudentGrade() == grade)
                                                             .collect(Collectors.toList());
             
-            if (studentsInGrade == null)
+            if (studentsInGrade == null || studentsInGrade.size() == 0)
                 continue;
             
             // school item winner based on points
@@ -132,7 +140,7 @@ public class PointController {
                     luckyWinnerTwo.setStudentName(studentsInGrade.get(2).getStudentName());
                     luckyWinnerTwo.setWinnerType("LUCKY WINNER");
                     luckyWinnerTwo.setPrizeType("SCHOOL SPRIT");
-                    luckyWinnerTwo.setPrize(quarter.getFoodReward());
+                    luckyWinnerTwo.setPrize(quarter.getSchoolSprit());
 
                     winnerRepository.save(luckyWinnerOne);
                 }
@@ -165,13 +173,14 @@ public class PointController {
                 randomWinnerTwo.setStudentName(studentsInGrade.get(r2).getStudentName());
                 randomWinnerTwo.setWinnerType("LUCKY WINNER");
                 randomWinnerTwo.setPrizeType("SCHOOL SPRIT");
-                randomWinnerTwo.setPrize(quarter.getFoodReward());
+                randomWinnerTwo.setPrize(quarter.getSchoolSprit());
 
                 winnerRepository.save(randomWinnerOne);
             
             }
         }
 
+        winners = winnerRepository.getWinners(quarterName);
         return winners;
     }
 }
