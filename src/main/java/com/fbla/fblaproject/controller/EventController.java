@@ -33,8 +33,7 @@ public class EventController {
     @PostMapping("/add")
     public String add(@RequestBody Event event){
         eventRepository.save(event);
-        System.out.println("New event added.");
-        return "New event added";
+        return "New student is added";
                 
     }
     
