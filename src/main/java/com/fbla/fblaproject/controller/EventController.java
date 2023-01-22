@@ -43,6 +43,12 @@ public class EventController {
         return result;
     }
     
+    @GetMapping("/allEvents")
+    public List<Event> allEvents() {
+        List<Event> result = eventRepository.findAll();
+        return result;
+    }
+    
         
     @GetMapping("/completedEvents")
     public List<Event> getCompletedEvents(){
