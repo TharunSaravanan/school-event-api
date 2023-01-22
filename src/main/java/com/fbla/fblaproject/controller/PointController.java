@@ -175,7 +175,7 @@ public class PointController {
                 randomWinnerTwo.setPrizeType("SCHOOL SPRIT");
                 randomWinnerTwo.setPrize(quarter.getSchoolSprit());
 
-                winnerRepository.save(randomWinnerOne);
+                winnerRepository.save(randomWinnerTwo);
             
             }
         }
