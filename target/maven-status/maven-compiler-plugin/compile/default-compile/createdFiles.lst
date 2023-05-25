@@ -1,0 +1,15 @@
+com/fbla/fblaproject/repository/WinnerRepository.class
+com/fbla/fblaproject/model/Point.class
+com/fbla/fblaproject/repository/QuarterRepository.class
+com/fbla/fblaproject/repository/StudentRepository.class
+com/fbla/fblaproject/model/LeaderBoardPoint.class
+com/fbla/fblaproject/model/Event.class
+com/fbla/fblaproject/model/Quarter.class
+com/fbla/fblaproject/controller/EventController.class
+com/fbla/fblaproject/controller/StudentController.class
+com/fbla/fblaproject/model/Student.class
+com/fbla/fblaproject/FblaprojectApplication.class
+com/fbla/fblaproject/model/Winner.class
+com/fbla/fblaproject/controller/PointController.class
+com/fbla/fblaproject/repository/EventRepository.class
+com/fbla/fblaproject/repository/PointRepository.class

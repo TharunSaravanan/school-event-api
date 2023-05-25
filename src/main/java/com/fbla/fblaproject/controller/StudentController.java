@@ -34,7 +34,7 @@ public class StudentController {
     public String add(@RequestBody Student student) {
         studentRepository.save(student);
         return "New student is added";
-
+        
     }
 
     @GetMapping("/getAll")
