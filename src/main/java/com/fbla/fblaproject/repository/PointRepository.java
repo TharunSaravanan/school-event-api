@@ -29,7 +29,8 @@ public interface PointRepository extends JpaRepository<Point, Integer> {
                     "WHERE p.student_id = s.id\n" +
                     "AND p.event_id = e.id\n" +
                     "AND e.time >= (select start_date from quarter where name = ?1)\n" +
-                    "group by student_id, student_grade, points\n" +
+                    "AND e.time <= (select end_date from quarter where name = ?1)\n" +
+                    "group by student_id, student_grade\n" +
                     "order by StudentGrade, TotalPoints desc", nativeQuery = true)
     List<LeaderBoardPoint> getLeaderBoardForQuarter(String quarterName);
 }
