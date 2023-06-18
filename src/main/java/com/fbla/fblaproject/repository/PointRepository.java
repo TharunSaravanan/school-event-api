@@ -23,6 +23,10 @@ public interface PointRepository extends JpaRepository<Point, Integer> {
     @Query(value = "SELECT * FROM POINT WHERE event_id = ?1 and STUDENT_GRADE = ?2", nativeQuery = true)
     List<Point> getEventPoints(int eventId, int grade);
     
+    
+    // Query statement to combine student, points, and events table to sum up points grouped by student_id and student_grade
+    // also orders the results by total points
+    
     @Query(value = "SELECT student_id as StudentId, s.name as StudentName, \n" +
                     "student_grade as StudentGrade, sum(points) as TotalPoints\n" +
                     "FROM point p, student s, event e\n" +

@@ -85,6 +85,15 @@ public class PointController {
     @GetMapping("/draw")
     public List<Winner> draw(String quarterName) {
         
+        // Draw algorithm
+        // Get the leaderboard for a quarter
+        // Select winners for each grade from 9th to 12th 
+        // If there are more than 3 participants in a grade, randomly select 2 winners
+        // If there are no student in a grade, ignore - no winnder is drawn
+        // If there is only one studnet in a grade, he is the leader winner -> school reward
+        // If there are exactly two students in a grade, first person is the leader winner and the second person gets the FOOD REWARD
+        // If there are three students in a grade, first place gets SCHOOL REWARD, second place gets FOOD REWARD, and third place gets SCHOOL SPIRIT
+        
         List<LeaderBoardPoint> leaders = pointRepository.getLeaderBoardForQuarter(quarterName);
         List<Winner> winners = new ArrayList<Winner>();
         
@@ -151,7 +160,15 @@ public class PointController {
                 Random r = new Random();
                 int maxRange = studentsInGrade.size();
                 int r1 = r.nextInt(maxRange);
+                
+                
+                // make sure first place winner is not randomly selected
+                while(r1 == 0)
+                    r1 = r.nextInt(maxRange);
+                
                 int r2 = 0;
+                
+                // make sure first place winner is not randomly selected again & same person is not selected twice
                 while (r2 == 0 || r2 == r1)
                     r2 = r.nextInt(maxRange);
                 
