@@ -32,7 +32,7 @@ public class UserController {
         User result = userRepository.getUser(email, password);
         
         if (result != null)
-            return result.getType();
+            return result.getType() + "," + result.getName();
         else
             return "0";
     }

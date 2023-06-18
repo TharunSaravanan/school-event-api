@@ -21,6 +21,7 @@ public class User {
     private String email;
     private String password;
     private String type;
+    private String name;
     
     public User() {
     }
@@ -56,5 +57,14 @@ public class User {
     public void setType(String type) {
         this.type = type;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     
 }
