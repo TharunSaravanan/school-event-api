@@ -5,22 +5,17 @@
  */
 package com.fbla.fblaproject.controller;
 
-import com.fbla.fblaproject.model.Event;
 import com.fbla.fblaproject.model.LeaderBoardPoint;
 import com.fbla.fblaproject.model.Point;
 import com.fbla.fblaproject.model.Quarter;
-import com.fbla.fblaproject.model.Student;
 import com.fbla.fblaproject.model.Winner;
-import com.fbla.fblaproject.repository.EventRepository;
 import com.fbla.fblaproject.repository.PointRepository;
 import com.fbla.fblaproject.repository.QuarterRepository;
-import com.fbla.fblaproject.repository.StudentRepository;
 import com.fbla.fblaproject.repository.WinnerRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,15 +35,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PointController {
     @Autowired
     private PointRepository pointRepository;
-    
-    @Autowired
-    private StudentRepository studentRepository;
-    
+        
     @Autowired
     private QuarterRepository quarterRepository;
     
     @Autowired
     private WinnerRepository winnerRepository;
+   
     
     @PostMapping("/addPoints")
     public void add(@RequestBody Point[] points) {
@@ -88,15 +81,14 @@ public class PointController {
         // Draw algorithm
         // Get the leaderboard for a quarter
         // Select winners for each grade from 9th to 12th 
-        // If there are more than 3 participants in a grade, randomly select 2 winners
         // If there are no student in a grade, ignore - no winnder is drawn
+        // If there are more than 3 participants in a grade, randomly select 2 winners
         // If there is only one studnet in a grade, he is the leader winner -> school reward
         // If there are exactly two students in a grade, first person is the leader winner and the second person gets the FOOD REWARD
         // If there are three students in a grade, first place gets SCHOOL REWARD, second place gets FOOD REWARD, and third place gets SCHOOL SPIRIT
         
         List<LeaderBoardPoint> leaders = pointRepository.getLeaderBoardForQuarter(quarterName);
-        List<Winner> winners = new ArrayList<Winner>();
-        
+
         Quarter quarter = quarterRepository.getQuarter(quarterName);
         
         //delete prevoius draws if any
@@ -110,57 +102,19 @@ public class PointController {
                                                             .filter(s -> s.getStudentGrade() == grade)
                                                             .collect(Collectors.toList());
             
-            if (studentsInGrade == null || studentsInGrade.size() == 0)
+            // no participant from the grade, ignore
+            if (studentsInGrade == null || studentsInGrade.isEmpty())
                 continue;
-            
-            // school item winner based on points
-            Winner topInGrade = new Winner();
-            topInGrade.setQuarterName(quarterName);
-            topInGrade.setStudentGrade(grade);
-            topInGrade.setStudentId(studentsInGrade.get(0).getStudentId());
-            topInGrade.setStudentName(studentsInGrade.get(0).getStudentName());
-            topInGrade.setWinnerType("LEADER WINNER");
-            topInGrade.setPrizeType("SCHOOL REWARD");
-            topInGrade.setPrize(quarter.getSchoolReward());
 
-            winnerRepository.save(topInGrade);
-            
-            // lucky winners selection
-            // choose the second & third student as lucky winner, if there is only 3 or less participants
-            if (studentsInGrade.size() > 1 && studentsInGrade.size() <= 3)
+            if (studentsInGrade.size() > 3)
             {
-                Winner luckyWinnerOne = new Winner();
-                luckyWinnerOne.setQuarterName(quarterName);
-                luckyWinnerOne.setStudentGrade(grade);
-                luckyWinnerOne.setStudentId(studentsInGrade.get(1).getStudentId());
-                luckyWinnerOne.setStudentName(studentsInGrade.get(1).getStudentName());
-                luckyWinnerOne.setWinnerType("LUCKY WINNER");
-                luckyWinnerOne.setPrizeType("FOOD REWARD");
-                luckyWinnerOne.setPrize(quarter.getFoodReward());
-
-                winnerRepository.save(luckyWinnerOne);
-                
-                if (studentsInGrade.size() == 3)
-                {
-                    Winner luckyWinnerTwo = new Winner();
-                    luckyWinnerTwo.setQuarterName(quarterName);
-                    luckyWinnerTwo.setStudentGrade(grade);
-                    luckyWinnerTwo.setStudentId(studentsInGrade.get(2).getStudentId());
-                    luckyWinnerTwo.setStudentName(studentsInGrade.get(2).getStudentName());
-                    luckyWinnerTwo.setWinnerType("LUCKY WINNER");
-                    luckyWinnerTwo.setPrizeType("SCHOOL SPRIT");
-                    luckyWinnerTwo.setPrize(quarter.getSchoolSprit());
-
-                    winnerRepository.save(luckyWinnerOne);
-                }
-            }
-            else if (studentsInGrade.size() > 3)
-            {
-                // more than 3 participants. choose randomly
+                // one school item winner based on points & the other two students are selected randomly 
+                setLeaderWinner(studentsInGrade.get(0), quarter, grade);
+                    
+                // more than 3 participants. choose two lucky winners randomly
                 Random r = new Random();
                 int maxRange = studentsInGrade.size();
                 int r1 = r.nextInt(maxRange);
-                
                 
                 // make sure first place winner is not randomly selected
                 while(r1 == 0)
@@ -172,32 +126,70 @@ public class PointController {
                 while (r2 == 0 || r2 == r1)
                     r2 = r.nextInt(maxRange);
                 
-                Winner randomWinnerOne = new Winner();
-                randomWinnerOne.setQuarterName(quarterName);
-                randomWinnerOne.setStudentGrade(grade);
-                randomWinnerOne.setStudentId(studentsInGrade.get(r1).getStudentId());
-                randomWinnerOne.setStudentName(studentsInGrade.get(r1).getStudentName());
-                randomWinnerOne.setWinnerType("LUCKY WINNER");
-                randomWinnerOne.setPrizeType("FOOD REWARD");
-                randomWinnerOne.setPrize(quarter.getFoodReward());
-
-                winnerRepository.save(randomWinnerOne);
-                
-                Winner randomWinnerTwo = new Winner();
-                randomWinnerTwo.setQuarterName(quarterName);
-                randomWinnerTwo.setStudentGrade(grade);
-                randomWinnerTwo.setStudentId(studentsInGrade.get(r2).getStudentId());
-                randomWinnerTwo.setStudentName(studentsInGrade.get(r2).getStudentName());
-                randomWinnerTwo.setWinnerType("LUCKY WINNER");
-                randomWinnerTwo.setPrizeType("SCHOOL SPRIT");
-                randomWinnerTwo.setPrize(quarter.getSchoolSprit());
-
-                winnerRepository.save(randomWinnerTwo);
+                setLuckyWinnerOne(studentsInGrade.get(r1), quarter, grade);
+                setLuckyWinnerTwo(studentsInGrade.get(r2), quarter, grade);
             
+            }
+            else if (studentsInGrade.size() == 3)
+            {
+                // one school item winner based on points & the other two students are lucky winners
+                setLeaderWinner(studentsInGrade.get(0), quarter, grade);
+                setLuckyWinnerOne(studentsInGrade.get(1), quarter, grade);
+                setLuckyWinnerTwo(studentsInGrade.get(2), quarter, grade);
+            }
+            else if (studentsInGrade.size() == 2)
+            {
+                // one school item winner based on points & the next student is the lucky winner
+                setLeaderWinner(studentsInGrade.get(0), quarter, grade);
+                setLuckyWinnerOne(studentsInGrade.get(1), quarter, grade);
             }
         }
 
+        List<Winner> winners = new ArrayList<Winner>();
         winners = winnerRepository.getWinners(quarterName);
         return winners;
+    }
+    
+    private void setLeaderWinner(LeaderBoardPoint point, Quarter quarter, int grade)
+    {
+            Winner topInGrade = new Winner();
+            topInGrade.setQuarterName(quarter.getName());
+            topInGrade.setStudentGrade(grade);
+            topInGrade.setStudentId(point.getStudentId());
+            topInGrade.setStudentName(point.getStudentName());
+            topInGrade.setWinnerType("LEADER WINNER");
+            topInGrade.setPrizeType("SCHOOL REWARD");
+            topInGrade.setPrize(quarter.getSchoolReward());
+
+            // store record to winner table
+            winnerRepository.save(topInGrade);
+    }
+    
+    private void setLuckyWinnerOne(LeaderBoardPoint point, Quarter quarter, int grade)
+    {
+            Winner luckyWinnerOne = new Winner();
+            luckyWinnerOne.setQuarterName(quarter.getName());
+            luckyWinnerOne.setStudentGrade(grade);
+            luckyWinnerOne.setStudentId(point.getStudentId());
+            luckyWinnerOne.setStudentName(point.getStudentName());
+            luckyWinnerOne.setWinnerType("LUCKY WINNER");
+            luckyWinnerOne.setPrizeType("FOOD REWARD");
+            luckyWinnerOne.setPrize(quarter.getFoodReward());
+
+            winnerRepository.save(luckyWinnerOne);
+    }
+        
+    private void setLuckyWinnerTwo(LeaderBoardPoint point, Quarter quarter, int grade)
+    {
+            Winner luckyWinnerTwo = new Winner();
+            luckyWinnerTwo.setQuarterName(quarter.getName());
+            luckyWinnerTwo.setStudentGrade(grade);
+            luckyWinnerTwo.setStudentId(point.getStudentId());
+            luckyWinnerTwo.setStudentName(point.getStudentName());
+            luckyWinnerTwo.setWinnerType("LUCKY WINNER");
+            luckyWinnerTwo.setPrizeType("SCHOOL SPIRIT");
+            luckyWinnerTwo.setPrize(quarter.getSchoolReward());
+
+            winnerRepository.save(luckyWinnerTwo);
     }
 }
