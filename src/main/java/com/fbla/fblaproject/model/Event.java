@@ -22,7 +22,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private String description;
+    private String requirement;
     private LocalDate time;
     private int attendancePoints;
     private int participationPoints;
@@ -68,14 +68,6 @@ public class Event {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public LocalDate getTime() {
         return time;
     }
@@ -83,7 +75,14 @@ public class Event {
     public void setTime(LocalDate time) {
         this.time = time;
     }
-    
+
+    public String getRequirement() {
+        return requirement;
+    }
+
+    public void setRequirement(String requirement) {
+        this.requirement = requirement;
+    }
     
             
 }
